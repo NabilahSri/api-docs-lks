@@ -49,7 +49,7 @@ class TransactionController extends Controller
 
         $items = $validated['items'];
         $productIds = collect($items)->pluck('product_id')->unique()->values()->all();
-        $qtyByProductId = collect($items)->groupBy('product_id')->map(fn($rows) => (int) collect($rows)->sum('qty'));
+        $qtyByProductId = collect($items)->groupBy('product_id')->map(fn ($rows) => (int) collect($rows)->sum('qty'));
 
         $user = auth('api')->user();
 
@@ -81,7 +81,7 @@ class TransactionController extends Controller
 
             $date = now()->toDateString();
             do {
-                $invoiceNumber = 'INV-' . $date . '-' . Str::upper(Str::random(6));
+                $invoiceNumber = 'INV-'.$date.'-'.Str::upper(Str::random(6));
             } while (Transaction::query()->where('invoice_number', $invoiceNumber)->exists());
 
             $transaction = Transaction::create([
@@ -146,7 +146,7 @@ class TransactionController extends Controller
             'id' => $transaction->id,
             'invoice_number' => $transaction->invoice_number,
             'date' => optional($transaction->transaction_date)->format('Y-m-d'),
-            'items' => $transaction->items->map(fn(TransactionItem $item) => [
+            'items' => $transaction->items->map(fn (TransactionItem $item) => [
                 'product_id' => $item->product_id,
                 'name' => $item->product_name,
                 'unit_price' => $item->unit_price,

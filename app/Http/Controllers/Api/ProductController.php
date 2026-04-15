@@ -18,8 +18,6 @@ class ProductController extends Controller
             ], 403);
         }
 
-        $q = trim((string) $request->query('q', ''));
-
         $query = Product::query()->select([
             'id',
             'name',
@@ -30,10 +28,6 @@ class ProductController extends Controller
             'created_at',
             'updated_at',
         ]);
-
-        if ($q !== '') {
-            $query->where('name', 'like', '%' . $q . '%');
-        }
 
         $query->orderBy('id');
 

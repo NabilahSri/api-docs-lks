@@ -488,10 +488,6 @@
                                     <label for="reg-name">Nama</label>
                                     <input id="reg-name" placeholder="Nama Lengkap" />
                                 </div>
-                                <div class="field">
-                                    <label for="reg-username">Username</label>
-                                    <input id="reg-username" placeholder="username" />
-                                </div>
                                 <div class="field span-all">
                                     <label for="reg-address">Alamat</label>
                                     <input id="reg-address" placeholder="Alamat" />
@@ -562,12 +558,6 @@
 
                         <div class="spacer-10"></div>
 
-                        <div class="controls">
-                            <div class="field">
-                                <label for="prod-q">Search (q)</label>
-                                <input id="prod-q" placeholder="fanta" />
-                            </div>
-                        </div>
                         <div class="btns span-all">
                             <button class="good" id="btn-products">GET /products</button>
                         </div>
@@ -661,11 +651,11 @@
                 </div>
                 <div class="kv">
                     <div class="k">Body</div>
-                    <div class="v">name, username, address, email, password, password_confirmation</div>
+                    <div class="v">name, address, email, password, password_confirmation</div>
                 </div>
                 <pre>curl -X POST "{{ rtrim(request()->getSchemeAndHttpHost(), '/') }}/api/auth/register" \
   -H "Content-Type: application/json" \
-  -d "{\"name\":\"Pelanggan 1\",\"username\":\"pelanggan1\",\"address\":\"Jl. Pelanggan 1\",\"email\":\"pelanggan1@example.com\",\"password\":\"password123\",\"password_confirmation\":\"password123\"}"</pre>
+  -d "{\"name\":\"Pelanggan 1\",\"address\":\"Jl. Pelanggan 1\",\"email\":\"pelanggan1@example.com\",\"password\":\"password123\",\"password_confirmation\":\"password123\"}"</pre>
 
                 <div class="spacer-12"></div>
 
@@ -730,13 +720,9 @@
                         <span class="path">/api/products</span>
                         <span class="tag">Bearer token</span>
                     </div>
-                    <div class="meta">List + search</div>
+                    <div class="meta">List produk</div>
                 </div>
-                <div class="kv">
-                    <div class="k">Query</div>
-                    <div class="v">q (opsional)</div>
-                </div>
-                <pre>curl "{{ rtrim(request()->getSchemeAndHttpHost(), '/') }}/api/products?q=fanta" \
+                <pre>curl "{{ rtrim(request()->getSchemeAndHttpHost(), '/') }}/api/products" \
   -H "Authorization: Bearer &lt;token&gt;"</pre>
 
                 <div class="spacer-12"></div>
@@ -812,7 +798,9 @@
     </div>
 
     <script>
-        const API_BASE = @json(rtrim(request()->getSchemeAndHttpHost(), '/'));
+        const API_BASE = (window.location && window.location.origin) ?
+            window.location.origin :
+            @json(rtrim(request()->getSchemeAndHttpHost(), '/'));
         const TOKEN_KEY = 'lks_api_token';
 
         const elTokenInput = document.getElementById('token-input');
@@ -915,7 +903,6 @@
         document.getElementById('fill-register').addEventListener('click', () => {
             const suffix = String(Date.now()).slice(-6);
             document.getElementById('reg-name').value = 'Pelanggan ' + suffix;
-            document.getElementById('reg-username').value = 'pelanggan' + suffix;
             document.getElementById('reg-address').value = 'Jl. Pelanggan ' + suffix;
             document.getElementById('reg-email').value = 'pelanggan' + suffix + '@example.com';
             document.getElementById('reg-password').value = 'password123';
@@ -930,7 +917,6 @@
         document.getElementById('btn-register').addEventListener('click', async () => {
             const body = {
                 name: document.getElementById('reg-name').value,
-                username: document.getElementById('reg-username').value,
                 address: document.getElementById('reg-address').value,
                 email: document.getElementById('reg-email').value,
                 password: document.getElementById('reg-password').value,
@@ -974,11 +960,7 @@
         });
 
         document.getElementById('btn-products').addEventListener('click', async () => {
-            const q = document.getElementById('prod-q').value.trim();
-            const params = new URLSearchParams();
-            if (q) params.set('q', q);
-            const path = '/api/products' + (params.toString() ? ('?' + params.toString()) : '');
-            const result = await apiRequest('GET', path, null, true);
+            const result = await apiRequest('GET', '/api/products', null, true);
             setStatus(elApiStatus, result.status, result.ok);
             setResponse(elApiResp, result.data);
         });

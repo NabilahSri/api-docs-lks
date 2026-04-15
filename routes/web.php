@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -7,5 +8,5 @@ Route::get('/', function () {
 });
 
 Route::get('/api-docs', function () {
-    return view('api-docs', ['products' => \App\Models\Product::all()]);
+    return view('api-docs', ['products' => Product::all()]);
 });
